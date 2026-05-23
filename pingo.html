@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Pingo • Animation Spec Sheet v2</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    background: #0a0820;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 40px 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    margin: 0;
+    background: linear-gradient(90deg, #5B8DEF, #8B5CF6, #EC4899);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8b85b8;
+    margin-bottom: 50px;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  .card {
+    background: linear-gradient(160deg, #1a1340 0%, #15102e 100%);
+    border-radius: 24px;
+    padding: 20px 14px 18px;
+    text-align: center;
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    box-shadow: 0 6px 24px rgba(91, 141, 239, 0.08);
+    overflow: hidden;
+  }
+  .stage {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+  .label {
+    margin-top: 12px;
+    font-weight: 700;
+    color: #c4b8ff;
+    letter-spacing: 1.5px;
+    font-size: 0.85rem;
+  }
+  .meta {
+    color: #6e6890;
+    font-size: 0.7rem;
+    margin-top: 4px;
+    font-family: monospace;
+  }
+  .section-title {
+    grid-column: 1 / -1;
+    font-size: 1.1rem;
+    color: #8b5cf6;
+    margin: 30px 0 -10px;
+    letter-spacing: 3px;
+    border-left: 4px solid #ec4899;
+    padding-left: 12px;
+  }
+
+  /* ============================================
+     PINGO BASE — Using actual character image
+     ============================================ */
+  .pingo {
+    width: 160px;
+    height: 160px;
+    background-image: url('pingo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    transform-origin: center bottom;
+    filter: drop-shadow(0 8px 16px rgba(139, 92, 246, 0.4));
+  }
+
+  /* ============================================
+     ANIMATION CLASSES
+     ============================================ */
+
+  /* 01 IDLE — gentle breathing */
+  .anim-idle { animation: idleBreath 2.4s ease-in-out infinite; }
+  @keyframes idleBreath {
+    0%, 100% { transform: translateY(0) scale(1, 1); }
+    50%      { transform: translateY(-4px) scale(1.02, 0.98); }
+  }
+
+  /* 02 HAPPY — bouncy */
+  .anim-happy { animation: happyBounce 1.4s ease-in-out infinite; }
+  @keyframes happyBounce {
+    0%, 100% { transform: translateY(0) scale(1,1); }
+    50%      { transform: translateY(-18px) scale(1.06, 0.94); }
+  }
+
+  /* 03 EXCITED — fast wiggle */
+  .anim-excited { animation: excitedWiggle 0.6s ease-in-out infinite; }
+  @keyframes excitedWiggle {
+    0%, 100% { transform: rotate(-7deg) translateY(0); }
+    25%      { transform: rotate(7deg) translateY(-8px); }
+    50%      { transform: rotate(-5deg) translateY(-12px); }
+    75%      { transform: rotate(5deg) translateY(-8px); }
+  }
+
+  /* 04 SLEEPY — slow breath + sway */
+  .anim-sleepy { animation: sleepyBreath 3s ease-in-out infinite; filter: drop-shadow(0 8px 16px rgba(139, 92, 246, 0.4)) brightness(0.85) saturate(0.8); }
+  @keyframes sleepyBreath {
+    0%, 100% { transform: scale(1) translateY(0) rotate(-2deg); }
+    50%      { transform: scale(1.04) translateY(-3px) rotate(2deg); }
+  }
+
+  /* 05 LOVE — pulse */
+  .anim-love { animation: lovePulse 1.2s ease-in-out infinite; }
+  @keyframes lovePulse {
+    0%, 100% { transform: scale(1); }
+    25%      { transform: scale(1.1); }
+    50%      { transform: scale(1.05); }
+    75%      { transform: scale(1.12); }
+  }
+
+  /* 06 SHOCKED — shake */
+  .anim-shocked { animation: shockShake 0.6s ease-in-out infinite; }
+  @keyframes shockShake {
+    0%, 100% { transform: translate(0,0) scale(1.08); }
+    20% { transform: translate(-5px, -4px) scale(1.1) rotate(-3deg); }
+    40% { transform: translate(5px, -4px) scale(1.1) rotate(3deg); }
+    60% { transform: translate(-4px, 0) scale(1.08) rotate(-2deg); }
+    80% { transform: translate(4px, 0) scale(1.08) rotate(2deg); }
+  }
+
+  /* 07 THINKING — tilt back and forth */
+  .anim-thinking { animation: thinkTilt 2.5s ease-in-out infinite; }
+  @keyframes thinkTilt {
+    0%, 100% { transform: rotate(-10deg) translateY(0); }
+    50%      { transform: rotate(10deg) translateY(-5px); }
+  }
+
+  /* 08 WAVING — small lean (waves built into character) */
+  .anim-waving { animation: waveLean 1s ease-in-out infinite; }
+  @keyframes waveLean {
+    0%, 100% { transform: rotate(-5deg); }
+    50%      { transform: rotate(5deg) translateY(-3px); }
+  }
+
+  /* 09 FLOATING — slow float */
+  .anim-floating { animation: floatUp 3s ease-in-out infinite; }
+  @keyframes floatUp {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-22px) rotate(2deg); }
+  }
+
+  /* 11 JUMPING — high jump with squash */
+  .anim-jumping { animation: jumpHigh 1s ease-in-out infinite; }
+  @keyframes jumpHigh {
+    0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
+    20%      { transform: translateY(0) scaleY(0.8) scaleX(1.2); }
+    50%      { transform: translateY(-50px) scaleY(1.15) scaleX(0.9); }
+    80%      { transform: translateY(0) scaleY(0.85) scaleX(1.15); }
+  }
+
+  /* 15 CELEBRATING — spin + bounce */
+  .anim-celebrate { animation: celebrate 1.8s ease-in-out infinite; }
+  @keyframes celebrate {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    25%      { transform: translateY(-15px) rotate(-10deg) scale(1.08); }
+    50%      { transform: translateY(-5px) rotate(0) scale(1); }
+    75%      { transform: translateY(-15px) rotate(10deg) scale(1.08); }
+  }
+
+  /* 19 ANGRY — fast vibrate */
+  .anim-angry { 
+    animation: angryShake 0.25s ease-in-out infinite; 
+    filter: drop-shadow(0 8px 16px rgba(239, 68, 68, 0.5)) hue-rotate(-40deg) saturate(1.5);
+  }
+  @keyframes angryShake {
+    0%, 100% { transform: translateX(0) scale(1.05); }
+    25%      { transform: translateX(-4px) scale(1.06); }
+    75%      { transform: translateX(4px) scale(1.06); }
+  }
+
+  /* 22 POP IN */
+  .anim-popin { animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1) infinite alternate; }
+  @keyframes popIn {
+    0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+
+  /* 23 POP OUT */
+  .anim-popout { animation: popOut 0.6s ease-in infinite; }
+  @keyframes popOut {
+    0%   { transform: scale(1) rotate(0); opacity: 1; }
+    100% { transform: scale(0) rotate(180deg); opacity: 0; }
+  }
+
+  /* 24 LOADING — spin */
+  .anim-loading { animation: spinLoad 1.2s linear infinite; }
+  @keyframes spinLoad {
+    0%   { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* HIGH FIVE */
+  .anim-highfive { animation: highFive 1.2s ease-in-out infinite; }
+  @keyframes highFive {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    40%      { transform: translateX(-15px) rotate(-15deg); }
+    60%      { transform: translateX(15px) rotate(15deg) scale(1.1); }
+  }
+
+  /* GAMING — focused side-to-side */
+  .anim-gaming { animation: gaming 1.5s ease-in-out infinite; }
+  @keyframes gaming {
+    0%, 100% { transform: translateX(0) rotate(-3deg); }
+    50%      { transform: translateX(0) rotate(3deg); }
+  }
+
+  /* COOL — chill sway */
+  .anim-cool { animation: coolSway 2s ease-in-out infinite; filter: drop-shadow(0 8px 16px rgba(139, 92, 246, 0.4)) brightness(1.1); }
+  @keyframes coolSway {
+    0%, 100% { transform: rotate(-3deg) translateY(0); }
+    50%      { transform: rotate(3deg) translateY(-5px); }
+  }
+
+  /* ============================================
+     SUB-ELEMENT OVERLAYS (particles)
+     ============================================ */
+
+  /* Hearts floating up */
+  .heart-particle {
+    position: absolute;
+    color: #EC4899;
+    font-size: 22px;
+    animation: heartRise 2s ease-out infinite;
+    text-shadow: 0 0 12px rgba(236,72,153,0.8);
+    z-index: 10;
+  }
+  @keyframes heartRise {
+    0%   { transform: translateY(0) scale(0.4); opacity: 0; }
+    20%  { opacity: 1; }
+    100% { transform: translateY(-120px) scale(1.5); opacity: 0; }
+  }
+
+  /* Z particles for sleep */
+  .zzz-particle {
+    position: absolute;
+    color: #c4a4ff;
+    font-weight: 800;
+    font-size: 22px;
+    animation: zzzFloat 2.5s ease-in-out infinite;
+    z-index: 10;
+  }
+  @keyframes zzzFloat {
+    0%   { transform: translate(0, 0) scale(0.5); opacity: 0; }
+    30%  { opacity: 1; }
+    100% { transform: translate(20px, -50px) scale(1.3); opacity: 0; }
+  }
+
+  /* Sparkles */
+  .sparkle {
+    position: absolute;
+    color: #fbbf24;
+    font-size: 18px;
+    animation: sparkleSpin 1.2s ease-in-out infinite;
+    z-index: 10;
+  }
+  @keyframes sparkleSpin {
+    0%, 100% { transform: scale(0) rotate(0); opacity: 0; }
+    50%      { transform: scale(1.2) rotate(180deg); opacity: 1; }
+  }
+
+  /* Confetti */
+  .confetti {
+    position: absolute;
+    width: 6px; height: 12px;
+    border-radius: 2px;
+    animation: confettiFall 1.8s ease-in infinite;
+    z-index: 10;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-40px) rotate(0); opacity: 1; }
+    100% { transform: translateY(180px) rotate(720deg); opacity: 0; }
+  }
+
+  /* Ping radar */
+  .ping-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 150px; height: 150px;
+    border: 3px solid #EC4899;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pingRadar 1.5s ease-out infinite;
+    z-index: 1;
+  }
+  .ping-ring:nth-child(2) { animation-delay: 0.5s; }
+  @keyframes pingRadar {
+    0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+  }
+
+  /* Typing dots bubble */
+  .typing-dots {
+    position: absolute;
+    bottom: 5px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 6px;
+    background: rgba(139,92,246,0.25);
+    padding: 8px 12px; 
+    border-radius: 20px;
+    z-index: 10;
+    border: 1px solid rgba(196, 77, 255, 0.4);
+  }
+  .typing-dots span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #c44dff;
+    animation: typeDot 1s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typeDot {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50%      { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Tear drops */
+  .tear {
+    position: absolute;
+    width: 10px; height: 14px;
+    background: linear-gradient(180deg, #60a5fa, #3b82f6);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: tearDrop 1.5s ease-in infinite;
+    z-index: 10;
+    box-shadow: 0 0 6px rgba(96, 165, 250, 0.6);
+  }
+  @keyframes tearDrop {
+    0%   { transform: translateY(0) scale(0.6); opacity: 1; }
+    50%  { transform: translateY(30px) scale(1); }
+    100% { transform: translateY(80px) scale(1.1); opacity: 0; }
+  }
+
+  /* Question mark */
+  .question {
+    position: absolute;
+    color: #EC4899;
+    font-size: 32px; 
+    font-weight: 900;
+    animation: questionPop 2s ease-in-out infinite;
+    z-index: 10;
+    text-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
+  }
+  @keyframes questionPop {
+    0%, 100% { transform: scale(0.8) rotate(-10deg); opacity: 0.6; }
+    50%      { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  }
+
+  /* Exclamation marks */
+  .exclaim {
+    position: absolute;
+    color: #fbbf24;
+    font-size: 28px; 
+    font-weight: 900;
+    animation: exclaimPop 0.6s ease-in-out infinite;
+    z-index: 10;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+  }
+  @keyframes exclaimPop {
+    0%, 100% { transform: scale(0.9); }
+    50%      { transform: scale(1.4); }
+  }
+
+  /* Heart eyes overlay (sits ON TOP of character's eyes) */
+  .heart-eye-overlay {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: radial-gradient(circle at 30% 30%, #ff8bd0, #ec4899);
+    transform: rotate(45deg);
+    border-radius: 0 50% 50% 50%;
+    animation: heartEyeBeat 0.8s ease-in-out infinite;
+    z-index: 5;
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.9);
+  }
+  .heart-eye-overlay::before,
+  .heart-eye-overlay::after {
+    content: '';
+    position: absolute;
+    width: 22px; height: 22px;
+    background: inherit;
+    border-radius: 50%;
+  }
+  .heart-eye-overlay::before { top: -11px; left: 0; }
+  .heart-eye-overlay::after  { top: 0; left: -11px; }
+  @keyframes heartEyeBeat {
+    0%, 100% { transform: rotate(45deg) scale(1); }
+    50%      { transform: rotate(45deg) scale(1.2); }
+  }
+
+  /* Sunglasses overlay */
+  .sunglasses {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 24px;
+    z-index: 5;
+  }
+  .sunglasses::before, .sunglasses::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 24px;
+    background: linear-gradient(135deg, #1a1a1a, #333);
+    border-radius: 50% 50% 40% 40%;
+    border: 2px solid #000;
+    box-shadow: inset -3px -3px 6px rgba(255,255,255,0.3);
+  }
+  .sunglasses::before { left: 0; }
+  .sunglasses::after  { right: 0; }
+
+  /* Sweat drop for thinking/effort */
+  .sweat {
+    position: absolute;
+    top: 30%;
+    right: 20%;
+    width: 12px;
+    height: 18px;
+    background: linear-gradient(180deg, #60a5fa, #3b82f6);
+    border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+    z-index: 10;
+    animation: sweatBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes sweatBounce {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.9; }
+    50%      { transform: translateY(5px) scale(1.1); opacity: 1; }
+  }
+
+  /* ============================================
+     MATCH SEQUENCE (two Pingos)
+     ============================================ */
+  .match-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .match-stage .pingo {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+  }
+  .pingo-left  { animation: leanLeft 2s ease-in-out infinite; left: 30%; transform-origin: bottom right; }
+  .pingo-right { animation: leanRight 2s ease-in-out infinite; right: 30%; transform: scaleX(-1); transform-origin: bottom left; }
+  @keyframes leanLeft {
+    0%, 100% { transform: rotate(-8deg) translateX(0); }
+    50%      { transform: rotate(8deg) translateX(10px); }
+  }
+  @keyframes leanRight {
+    0%, 100% { transform: scaleX(-1) rotate(-8deg) translateX(0); }
+    50%      { transform: scaleX(-1) rotate(8deg) translateX(10px); }
+  }
+  .big-heart-match {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 38px;
+    color: #EC4899;
+    text-shadow: 0 0 20px rgba(236, 72, 153, 1);
+    animation: heartBeatMatch 1s ease-in-out infinite;
+    z-index: 20;
+  }
+  @keyframes heartBeatMatch {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50%      { transform: translateX(-50%) scale(1.4); }
+  }
+
+  /* Glow halo behind character (love/match) */
+  .glow-halo {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 200px; height: 200px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(236,72,153,0.4) 0%, transparent 70%);
+    animation: haloGlow 2s ease-in-out infinite;
+    border-radius: 50%;
+    z-index: 0;
+  }
+  @keyframes haloGlow {
+    0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+    50%      { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  }
+
+  /* Game controller icon for gaming */
+  .controller {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    z-index: 10;
+    animation: controllerWobble 1s ease-in-out infinite;
+  }
+  @keyframes controllerWobble {
+    0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+    50%      { transform: translateX(-50%) rotate(5deg); }
+  }
+</style>
+</head>
+<body>
+
+<h1>PINGO</h1>
+<p class="subtitle">ANIMATION SPECIFICATION • v2.0 • USING OFFICIAL CHARACTER ART</p>
+
+<div class="grid">
+
+  <!-- ============ CORE EMOTIONS ============ -->
+  <div class="section-title">⚡ CORE EMOTIONS</div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-idle"></div></div>
+    <div class="label">01 • IDLE</div>
+    <div class="meta">2.4s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-happy"></div></div>
+    <div class="label">02 • HAPPY</div>
+    <div class="meta">1.4s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-excited"></div>
+      <div class="sparkle" style="top:10px; left:30px;">✦</div>
+      <div class="sparkle" style="top:20px; right:25px; animation-delay:0.4s;">✦</div>
+      <div class="sparkle" style="bottom:40px; left:20px; animation-delay:0.8s;">✦</div>
+      <div class="sparkle" style="bottom:30px; right:30px; animation-delay:0.6s;">✦</div>
+    </div>
+    <div class="label">03 • EXCITED</div>
+    <div class="meta">0.6s • loop • 60fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-sleepy"></div>
+      <div class="zzz-particle" style="top:20px; right:30px;">z</div>
+      <div class="zzz-particle" style="top:30px; right:50px; animation-delay:0.7s; font-size:16px;">Z</div>
+      <div class="zzz-particle" style="top:10px; right:20px; animation-delay:1.4s; font-size:26px;">z</div>
+    </div>
+    <div class="label">04 • SLEEPY</div>
+    <div class="meta">3.0s • loop • 24fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="glow-halo"></div>
+      <div class="pingo anim-love"></div>
+      <div class="heart-particle" style="left:30px; bottom:60px;">♥</div>
+      <div class="heart-particle" style="left:80px; bottom:80px; animation-delay:0.5s;">♥</div>
+      <div class="heart-particle" style="right:30px; bottom:50px; animation-delay:1s;">♥</div>
+      <div class="heart-particle" style="left:50%; bottom:100px; animation-delay:1.5s;">♥</div>
+    </div>
+    <div class="label">05 • LOVE</div>
+    <div class="meta">1.2s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-shocked"></div>
+      <div class="exclaim" style="top:15px; right:30px;">!</div>
+      <div class="exclaim" style="top:30px; right:15px; animation-delay:0.2s;">!</div>
+    </div>
+    <div class="label">06 • SHOCKED</div>
+    <div class="meta">0.6s • loop • 60fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-thinking"></div>
+      <div class="question" style="top:5px; right:25px;">?</div>
+    </div>
+    <div class="label">07 • THINKING</div>
+    <div class="meta">2.5s • loop • 30fps</div>
+  </div>
+
+  <!-- ============ ACTIONS ============ -->
+  <div class="section-title">🎯 ACTIONS & POSES</div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-waving"></div></div>
+    <div class="label">08 • WAVING</div>
+    <div class="meta">1.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-floating"></div></div>
+    <div class="label">09 • FLOATING</div>
+    <div class="meta">3.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="ping-ring"></div>
+      <div class="ping-ring"></div>
+      <div class="pingo anim-idle"></div>
+    </div>
+    <div class="label">10 • PING!</div>
+    <div class="meta">1.5s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-jumping"></div></div>
+    <div class="label">11 • JUMPING</div>
+    <div class="meta">1.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-love"></div>
+      <div class="heart-particle" style="left:50px; top:60px; animation-delay:0.3s;">♥</div>
+      <div class="heart-particle" style="left:100px; top:50px; animation-delay:0.9s;">♥</div>
+      <div class="heart-particle" style="right:40px; top:70px; animation-delay:1.5s;">♥</div>
+    </div>
+    <div class="label">12 • SENDING LOVE</div>
+    <div class="meta">2.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-highfive"></div></div>
+    <div class="label">13 • HIGH FIVE</div>
+    <div class="meta">1.2s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-gaming"></div>
+      <div class="controller">🎮</div>
+    </div>
+    <div class="label">14 • GAMING</div>
+    <div class="meta">1.5s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-celebrate"></div>
+      <div class="confetti" style="left:20px; top:-10px; background:#EC4899; animation-delay:0s;"></div>
+      <div class="confetti" style="left:60px; top:-10px; background:#fbbf24; animation-delay:0.3s;"></div>
+      <div class="confetti" style="left:100px; top:-10px; background:#5B8DEF; animation-delay:0.6s;"></div>
+      <div class="confetti" style="left:140px; top:-10px; background:#8B5CF6; animation-delay:0.9s;"></div>
+      <div class="confetti" style="left:180px; top:-10px; background:#10b981; animation-delay:1.2s;"></div>
+      <div class="confetti" style="left:40px; top:-10px; background:#f59e0b; animation-delay:1.5s;"></div>
+    </div>
+    <div class="label">15 • CELEBRATING</div>
+    <div class="meta">1.8s • loop • 60fps</div>
+  </div>
+
+  <!-- ============ IN-APP STATES ============ -->
+  <div class="section-title">💬 IN-APP STATES</div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-idle"></div>
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="label">16 • TYPING</div>
+    <div class="meta">1.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-sleepy"></div>
+      <div class="tear" style="top:95px; left:35%;"></div>
+      <div class="tear" style="top:95px; right:35%; animation-delay:0.5s;"></div>
+    </div>
+    <div class="label">17 • CRYING</div>
+    <div class="meta">2.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-cool"></div>
+      <div class="sunglasses"></div>
+    </div>
+    <div class="label">18 • COOL</div>
+    <div class="meta">2.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-angry"></div>
+      <div class="exclaim" style="top:15px; right:25px; color:#ef4444;">!</div>
+    </div>
+    <div class="label">19 • ANGRY</div>
+    <div class="meta">0.5s • loop • 60fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="pingo anim-thinking"></div>
+      <div class="question" style="top:0; right:25px;">?</div>
+      <div class="question" style="top:30px; right:5px; font-size:22px; animation-delay:0.5s;">?</div>
+    </div>
+    <div class="label">20 • CURIOUS</div>
+    <div class="meta">2.0s • loop • 30fps</div>
+  </div>
+
+  <!-- ============ SPECIAL ============ -->
+  <div class="section-title">✨ SPECIAL SEQUENCES</div>
+
+  <div class="card">
+    <div class="stage">
+      <div class="match-stage">
+        <div class="big-heart-match">♥</div>
+        <div class="pingo pingo-left"></div>
+        <div class="pingo pingo-right"></div>
+      </div>
+    </div>
+    <div class="label">21 • IT'S A MATCH!</div>
+    <div class="meta">2.0s • loop • 30fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-popin"></div></div>
+    <div class="label">22 • POP IN</div>
+    <div class="meta">0.5s • once • 60fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-popout"></div></div>
+    <div class="label">23 • POP OUT</div>
+    <div class="meta">0.4s • once • 60fps</div>
+  </div>
+
+  <div class="card">
+    <div class="stage"><div class="pingo anim-loading"></div></div>
+    <div class="label">24 • LOADING</div>
+    <div class="meta">1.2s • loop • 30fps</div>
+  </div>
+
+</div>
+
+</body>
+</html>
