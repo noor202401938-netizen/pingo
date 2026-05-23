@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Pingo • Animation Spec Sheet v2</title>
 <style>
   * { box-sizing: border-box; }
@@ -17,6 +18,7 @@
     font-size: 2.8rem;
     margin: 0;
     background: linear-gradient(90deg, #5B8DEF, #8B5CF6, #EC4899);
+    background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
   }
@@ -523,6 +525,30 @@
     0%, 100% { transform: translateX(-50%) rotate(-5deg); }
     50%      { transform: translateX(-50%) rotate(5deg); }
   }
+
+  /* Accessibility: respect users' reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .pingo,
+    .sparkle,
+    .heart-particle,
+    .zzz-particle,
+    .confetti,
+    .typing-dots,
+    .ping-ring,
+    .controller,
+    .glow-halo,
+    .heart-eye-overlay,
+    .sunglasses,
+    .tear,
+    .question,
+    .exclaim {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* Hint to the browser for smoother transform animations */
+  .pingo { will-change: transform; }
 </style>
 </head>
 <body>
@@ -757,6 +783,15 @@
   </div>
 
 </div>
+
+<script>
+  // Mark decorative character elements as hidden from assistive technologies
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.pingo').forEach(function (el) {
+      el.setAttribute('aria-hidden', 'true');
+    });
+  });
+</script>
 
 </body>
 </html>
